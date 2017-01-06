@@ -1,0 +1,29 @@
+{
+  "name": "movie-library",
+  "version": "1.0.0",
+  "description": "Movie Library App using Express.js and MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "keywords": [
+    "express.js",
+    "node.js",
+    "mongoDB",
+    "ejs",
+    "javascript",
+    "mongoose"
+  ],
+  "author": "Malay Nayak",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-validator": "^2.21.0",
+    "mongoose": "^4.6.8",
+    "multer": "^1.2.0",
+    "nodemon": "^1.11.0",
+    "validator": "^6.1.0"
+  }
+}

@@ -1,0 +1,62 @@
+<html>
+	<%- include head.ejs %>
+	<body>
+		<%- include nav.ejs %>
+		<div class="container">
+			<div class="col-md-12">
+				<% if (typeof movie!='undefined') { %>
+				  <h2>Update Movie : <%= movie.title %></h2>
+				<% } else { %>
+				  <h2>Add a movie</h2>
+				<% } %>
+			</div>
+			<div class="panel panel-default">
+				<div class="col-md-12">
+					
+					<% if (typeof errors!='undefined' && errors) { %>
+						<div class="alert alert-danger" role="alert">
+						  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+						  Follwing Error(s) Occured
+						  <ul>
+						  <% Object.keys(errors).forEach(function(key) { %>
+						  	<li><%= errors[key].message %></li>
+						  <% }); %>
+						  </ul>
+						</div>
+					<% } %>
+					
+
+					<form method="POST" action="<%= (action=='update')? '/movies/update/'+movie.id : '/movies/add' %>" enctype="multipart/form-data">
+						<% if (typeof movie!='undefined') { %>
+							<input value="<%= movie.id %>" name="id" type="hidden" />
+						<% } %>
+						<div class="form-group">
+							<label for="title">Title</label>
+							<input value="<%= (typeof movie!='undefined')? movie.title: '' %>" name="title" type="text" class="form-control" id="title">
+						</div>
+						<div class="form-group">
+							<label for="director">Director</label>
+							<input value="<%= (typeof movie!='undefined')? movie.director: '' %>" name="director" type="text" class="form-control" id="director">
+						</div>
+						<div class="form-group">
+							<label for="releaseYear">Relase Year</label>
+							<input value="<%= (typeof movie!='undefined')? movie.releaseYear: '' %>" name="releaseYear" type="text" class="form-control" id="releaseYear">
+						</div> 
+						<div class="form-group">
+							<label for="genre">Genre</label>
+							<input value="<%= (typeof movie!='undefined')? movie.genre: '' %>" name="genre" type="text" class="form-control" id="genre">
+						</div>
+						<div class="form-group">
+							<label for="poster">Poster Image</label>
+							<input name="poster" type="file" class="form-control" id="poster">
+						</div> 
+						<button type="submit" class="btn btn-success">Submit</button>
+						<a href="/movies" class="btn btn-danger">Cancel</a>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script href="/bower_components/jquery/dist/jquery.min.js"></script>
+	<script href="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</html>
