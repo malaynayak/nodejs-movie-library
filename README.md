@@ -2,7 +2,7 @@
 
 A simple crud application using express and mongoDb.
 
-# How to run
+# How To Run
 
 Configure your database in **db-config.js** file.
 
@@ -12,3 +12,9 @@ npm install
 bower install
 
 Run the application by executing the **node server.js**
+
+# Login Credentials
+
+Username: admin
+
+Password: 123456
