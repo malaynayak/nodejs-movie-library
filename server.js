@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var movies = require('./routes/movies'); //routes are defined here
 var dbConfig =  require('./db-config'); //database configuration
+var session = require('./session-config'); //session
 
 //connect to the database
 var connectionString = 'mongodb://';
@@ -13,6 +14,8 @@ connectionString+= dbConfig.host+':'+dbConfig.port+'/'+dbConfig.database
 mongoose.connect(connectionString);
 
 var app = express(); //Create the Express app
+//session configuration
+app.use(session);
 //static folder declaration
 app.use('/bower_components', express.static('bower_components'));
 // set the view engine to ejs

@@ -1,0 +1,36 @@
+<html>
+	<%- include head.ejs %>
+	<body>
+		<%- include nav.ejs %>
+		<div class="container">
+			<div class="col-md-12">
+				<h2>Login</h2>
+			</div>
+			<div class="panel panel-default">
+				<div class="col-md-12">
+					
+					<% if (typeof error!='undefined' && error) { %>
+						<div class="alert alert-danger" role="alert">
+						  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+						  <%= error %>
+						</div>
+					<% } %>
+					<form method="POST" action="/movies/login">
+						<div class="form-group">
+							<label for="username">Username</label>
+							<input value="<%= (typeof username!='undefined')? username: '' %>" type="text" name="username" class="form-control" id="username">
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input value="<%= (typeof password!='undefined')? password: '' %>" name="password" type="password" class="form-control" id="director">
+						</div>
+						<button type="submit" class="btn btn-success">Login</button>
+						<a href="/movies" class="btn btn-danger">Cancel</a>
+					</form>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script href="/bower_components/jquery/dist/jquery.min.js"></script>
+	<script href="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</html>

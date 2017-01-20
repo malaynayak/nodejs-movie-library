@@ -6,6 +6,14 @@ var path = require('path');
 var multer  = require('multer');
 var url = require('url');
 
+//Authorization Middleware
+var auth = function(req, res, next) {
+  if (req.session && req.session.user === "admin")
+    return next();
+  else
+    res.redirect('/movies/login');
+};
+
 //list all the movies
 router.route('/').get(function(req, res) {
   var url_parts = url.parse(req.url, true);
@@ -36,7 +44,13 @@ router.route('/').get(function(req, res) {
       if (err) {
         return res.send(err);
       }
-      res.render('pages/index',{movies:movies, search:search, pages:numPages, pageNo:pageNo});
+      res.render('pages/index',{
+        movies:movies, 
+        session:req.session, 
+        search:search, 
+        pages:numPages, 
+        pageNo:pageNo
+      });
     });
   });
 });
@@ -51,8 +65,7 @@ router.route('/view/:id').get(function(req,res){
     for (prop in req.body) {
       movie[prop] = req.body[prop];
     }
-    res.render('pages/movie',{movie:movie});
-    
+    res.render('pages/movie',{session:req.session, movie:movie});
   });
 });
 
@@ -75,8 +88,8 @@ router.route('/poster/:id').get(function(req,res){
 });
 
 //create a movie
-router.route('/add').get(function(req,res){
-  res.render('pages/form',{action:"add"});
+router.route('/add').get(auth, function(req,res){
+  res.render('pages/form',{session:req.session, action:"add"});
 });
 
 //for handling multipart form requests
@@ -99,10 +112,11 @@ var uploader = upload.single('poster');
 router.route('/add').post(function(req,res){
   uploader(req, res, function (err) {
     if(err){
-      return res.render('pages/form',
-        {errors:{"poster":{"message":err}},
-        movie:movie,
-        action:"add"
+      return res.render('pages/form', {
+          session:req.session,
+          errors:{"poster":{"message":err}},
+          movie:movie,
+          action:"add"
       });
     }
     var movie = new Movie(req.body);
@@ -112,8 +126,11 @@ router.route('/add').post(function(req,res){
     movie.save(function(err) {
         if (err) {
           if(err.name == "ValidationError"){
-            return res.render('pages/form',{errors:err.errors,
-              movie:movie,action:"add"});
+            return res.render('pages/form',{
+              session:req.session,
+              errors:err.errors,
+              movie:movie,action:"add"
+            });
           } else {
             return res.send(err);
           }
@@ -125,7 +142,7 @@ router.route('/add').post(function(req,res){
 
 
 //update a movie
-router.route('/update/:id').get(function(req,res){
+router.route('/update/:id').get(auth, function(req,res){
   Movie.findOne({ _id: req.params.id }, function(err, movie) {
     if (err) {
       return res.send(err);
@@ -133,7 +150,7 @@ router.route('/update/:id').get(function(req,res){
     for (prop in req.body) {
       movie[prop] = req.body[prop];
     }
-    res.render('pages/form',{movie:movie,action:"update"});
+    res.render('pages/form',{session:req.session, movie:movie,action:"update"});
   });
 });
 
@@ -175,8 +192,11 @@ router.route('/update/:id').post(function(req,res){
       movie.save(function(err) {
           if (err) {
             if(err.name == "ValidationError"){
-              return res.render('pages/form',{errors:err.errors,
-                movie:movie,action:"update"});
+              return res.render('pages/form',{
+                session:req.session,
+                errors:err.errors,
+                movie:movie,action:"update"
+              });
             } else {
               return res.send(err);
             }
@@ -188,7 +208,7 @@ router.route('/update/:id').post(function(req,res){
 });
 
 //delete a movie
-router.route('/delete/:id').get(function(req, res) {
+router.route('/delete/:id').get(auth, function(req, res) {
   Movie.findOne({ _id: req.params.id }, function(err, movie) {
     if (err) {
       return res.send(err);
@@ -213,5 +233,33 @@ router.route('/delete/:id').get(function(req, res) {
 
 });
 
+//login page
+router.route('/login').get(function(req,res){
+    if (req.session && req.session.user === "admin")
+      res.redirect('/movies');
+    else 
+      res.render('pages/login');
+});
+
+//login page form handler
+router.route('/login').post(function(req,res){
+  if(req.body.username !== "admin" || req.body.password !== "123456") {
+    return res.render('pages/login',
+      {
+        error:"Invalid username or password",
+        username:req.body.username,
+        password:req.body.password
+    }); 
+  } else {
+    req.session.user = "admin";
+    res.redirect('/movies');
+  }
+});
+
+//Logout endpoint
+router.route('/logout').get(auth, function (req, res) {
+  req.session.destroy();
+  res.redirect('/movies/login');
+});
 
 module.exports = router;
